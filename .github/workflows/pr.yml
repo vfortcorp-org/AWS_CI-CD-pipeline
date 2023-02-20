@@ -1,0 +1,20 @@
+name: 'PR Validation'
+
+# **What it does**: Runs the build for when a PR is created or when updated a pushed to specified branches
+# **Why we have it**: To ensure that new updated don't break production
+# **Who does it impact**: Docs content.
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - website
+      - script_files
+
+jobs:
+  pr-build:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
