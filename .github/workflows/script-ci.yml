@@ -1,4 +1,4 @@
-name: 'Deploy to EC2'
+name: 'Deploy Script Files to EC2'
 
 # **What it does**: Deploys the code to the EC2 instance
 # **Why we have it**: To deploy changes to production
@@ -8,14 +8,14 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - website
+      - script_files
 
 jobs:
 
   build:
     runs-on: ubuntu-latest
     environment: production
-    if: ${{ github.ref_name=='website' }}
+    if: ${{ github.ref_name=='script_files' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     needs: build
-    if: ${{ github.ref_name=='website' }}
+    if: ${{ github.ref_name=='script_files' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -38,4 +38,4 @@ jobs:
       - run: |
           echo "Deploying branch ${{ env.GITHUB_REF }} to ${{ github.event.inputs.environment }}"
           commit_hash=`git rev-parse HEAD`
-          aws deploy create-deployment --application-name CodeDeployAppNameWithASG --deployment-group-name websiteDeployment --github-location repository=$GITHUB_REPOSITORY,commitId=$commit_hash --ignore-application-stop-failures
+          aws deploy create-deployment --application-name CodeDeployAppNameWithASG --deployment-group-name scriptFileDeployment --github-location repository=$GITHUB_REPOSITORY,commitId=$commit_hash --ignore-application-stop-failures
