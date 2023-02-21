@@ -1,0 +1,41 @@
+name: 'Deploy Website to EC2'
+
+# **What it does**: Deploys the code to the EC2 instance
+# **Why we have it**: To deploy changes to production
+# **Who does it impact**: Docs content.
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - website
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    environment: production
+    if: ${{ github.ref_name=='website' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+  deploy_production:
+    runs-on: ubuntu-latest
+    environment: production
+    needs: build
+    if: ${{ github.ref_name=='website' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.IAMROLE_GITHUB }}
+          role-session-name: GitHub-Action-Role
+          aws-region: ${{ env.AWS_REGION }}
+
+      - run: |
+          echo "Deploying branch ${{ env.GITHUB_REF }} to ${{ github.event.inputs.environment }}"
+          commit_hash=`git rev-parse HEAD`
+          aws deploy create-deployment --application-name CodeDeployAppNameWithASG --deployment-group-name websiteDeployment --github-location repository=$GITHUB_REPOSITORY,commitId=$commit_hash --ignore-application-stop-failures
