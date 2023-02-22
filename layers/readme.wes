@@ -1,0 +1,6 @@
+The second argument (0 or 1) to the wms_layers.push function dictates whether
+the layer is identifiable (forgetting the name tonight).  0 is don't getfeaturebyinfo
+(I think is the name) and 1 is get getfeaturebyinfo -fwb-2Nov20 
+
+Also, it appears that the tomcat server needs a reboot once you make changes to the js 
+files. -fwb-2Nov20
